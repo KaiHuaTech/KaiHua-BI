@@ -1,3 +1,10 @@
 {
-  "plugins": []
+  "plugins": [],
+  "babelPresets": [
+    [
+      "@babel/preset-react",
+      { "runtime": "automatic", "importSource": "@emotion/react" }
+    ]
+  ],
+  "babelPlugins": ["@emotion/babel-plugin"]
 }
