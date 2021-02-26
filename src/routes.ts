@@ -1,5 +1,6 @@
 import Home from '@/pages/Home';
 import EmotionPage from '@/pages/Emotion';
+import DemoGrid from '@/pages/DemoGrid';
 
 const routerConfig = [
   {
@@ -10,6 +11,10 @@ const routerConfig = [
   {
     path: '/emotion',
     component: EmotionPage,
+  },
+  {
+    path: '/demogrid',
+    component: DemoGrid,
   },
 ];
 
