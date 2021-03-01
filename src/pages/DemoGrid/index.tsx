@@ -14,8 +14,8 @@ export default function DemoGrid() {
     {
       x: 0,
       y: 0,
-      w: 6,
-      h: 3,
+      w: 1,
+      h: 1,
     },
     {
       x: 7,

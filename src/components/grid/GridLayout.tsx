@@ -53,8 +53,8 @@ const GridLayout: React.FC<GridLayoutProps> = (props) => {
       return {
         left: Math.round(x * (cellWidth + margin) + margin / 2),
         top: Math.round(y * (rowHeight + margin) + margin / 2),
-        width: w * cellWidth,
-        height: h * rowHeight,
+        width: w * (cellWidth + margin) - margin,
+        height: h * (rowHeight + margin) - margin,
       };
     },
     [cellWidth, rowHeight, margin],

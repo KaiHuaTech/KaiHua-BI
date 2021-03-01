@@ -7,8 +7,8 @@ export default (cellWidth: number, cellHeight: number, cols: number, margin: num
       colsArr.map(
         (i) =>
           `<rect stroke='gray' stroke-width='${storkeW}' fill='none' x='${Math.round(
-            i * (cellWidth + margin) + margin / 2,
-          )}' y='${margin / 2}' width='${cellWidth}' height='${cellHeight}'/>`,
+            i * (cellWidth + margin) + margin / 2 + storkeW / 2,
+          )}' y='${margin / 2 + storkeW / 2}' width='${cellWidth - storkeW}' height='${cellHeight - storkeW}'/>`,
       )
         .join('')}</svg>`;
 
