@@ -24,6 +24,18 @@ export default function DemoGrid() {
       h: 3,
     },
   ];
+
+  const cards = [
+    {
+      id: 1,
+      content: '2',
+    },
+    {
+      id: 2,
+      content: '2',
+    },
+  ];
+
   const width = 500;
   const rowHeight = Math.floor(width / GRID_COLS / GRID_ASPECT_RATIO);
 
@@ -39,6 +51,7 @@ export default function DemoGrid() {
         margin={GRID_MARGIN}
         cols={GRID_COLS}
         rowHeight={rowHeight}
+        items={cards}
       />
     </div>
   );

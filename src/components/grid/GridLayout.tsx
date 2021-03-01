@@ -1,11 +1,13 @@
-import React, { useState, useRef, useEffect } from 'react';
+import React, { useState, useRef, useEffect, useCallback } from 'react';
 import { css } from '@emotion/react';
 
 import { GridItemLayout, RcCommonProps } from './interface';
 import getGridBackGround from './getGridBackGround';
+import GridItem from './GridItem';
 
-export interface GridLayoutProps extends RcCommonProps {
-  layout: GridItemLayout[];
+export interface GridLayoutProps<T=any> extends RcCommonProps{
+  items: T[];
+  layout: GridItemLayout[]; // layout 和 items 的顺序要数组顺序要一致
   margin: number;
   cols: number;
   rowHeight: number;
@@ -15,6 +17,7 @@ const GridLayout: React.FC<GridLayoutProps> = (props) => {
   const {
     className,
     margin,
+    items = [],
     layout,
     cols,
     rowHeight,
@@ -38,6 +41,25 @@ const GridLayout: React.FC<GridLayoutProps> = (props) => {
   const cellWidth = width / cols - margin;
   const background = getGridBackGround(cellWidth, rowHeight, cols, margin);
 
+  const getItemLayout = useCallback(
+    (l) => {
+      const {
+        x,
+        y,
+        w,
+        h,
+      } = l;
+
+      return {
+        left: Math.round(x * (cellWidth + margin) + margin / 2),
+        top: Math.round(y * (rowHeight + margin) + margin / 2),
+        width: w * cellWidth,
+        height: h * rowHeight,
+      };
+    },
+    [cellWidth, rowHeight, margin],
+  );
+
   return (
     <div
       ref={domRef}
@@ -49,7 +71,11 @@ const GridLayout: React.FC<GridLayoutProps> = (props) => {
         height: ${(rowHeight + margin) * bottom}px;
         background-image: ${background}
       `}
-    />
+    >
+      {items.map((item, l) => {
+        return <GridItem item={item} {...getItemLayout(layout[l])} />;
+      })}
+    </div>
   );
 };
 
