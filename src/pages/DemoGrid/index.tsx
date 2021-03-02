@@ -12,12 +12,14 @@ export default function DemoGrid() {
   */
   const layout = [
     {
+      i: '0',
       x: 0,
       y: 0,
       w: 1,
       h: 1,
     },
     {
+      i: '1',
       x: 7,
       y: 0,
       w: 3,
@@ -27,12 +29,12 @@ export default function DemoGrid() {
 
   const cards = [
     {
-      id: 1,
-      content: '2',
+      id: '0',
+      content: '0',
     },
     {
-      id: 2,
-      content: '2',
+      id: '1',
+      content: '1',
     },
   ];
 

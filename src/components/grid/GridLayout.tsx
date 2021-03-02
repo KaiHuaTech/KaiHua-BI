@@ -1,7 +1,7 @@
 import React, { useState, useRef, useEffect, useCallback } from 'react';
 import { css } from '@emotion/react';
 
-import { GridItemLayout, RcCommonProps, GridItemHandler } from './interface';
+import { GridItemLayout, RcCommonProps, GridItemDragHandler, GridItemResizeHandler } from './interface';
 import getGridBackGround from './getGridBackGround';
 import GridItem from './GridItem.tsx';
 
@@ -70,15 +70,15 @@ const GridLayout: React.FC<GridLayoutProps> = (props) => {
     (a: GridItemLayout, b: GridItemLayout) => {
       return (
         a.x < b.x + b.w &&
-        a.x + a.w < b.x &&
+        a.x + a.w > b.x &&
         a.y < b.y + b.h &&
-        b.y < a.y + a.h
+        a.y + a.h > b.y
       );
     },
     [],
   );
 
-  const handleDrag: GridItemHandler = (i, { position }) => {
+  const handleDrag: GridItemDragHandler = (i, { position }) => {
     const originalLayout = layout[i];
     const pos = getItemLayout(originalLayout);
     pos.left += position.left;
@@ -104,13 +104,61 @@ const GridLayout: React.FC<GridLayoutProps> = (props) => {
         proposedLayout = originalLayout;
       }
     }
-    setPlaceholder(targetLayout);
+    setPlaceholder({ ...proposedLayout, i: 'placeholder' });
   };
 
-  const handleDragStop: GridItemHandler = ((i, { position }) => {
-    //
+  const handleDragStop: GridItemDragHandler = ((i, { position }) => {
     setPlaceholder(null);
+    // todo
+    // this.props.onLayoutChange(newLayout);
   });
+
+  const handleResize: GridItemResizeHandler = (i, { size }) => {
+    const originalLayout = layout[i];
+
+    const minW = originalLayout.minSize?.width || 1;
+    const minH = originalLayout.minSize?.height || 1;
+    const maxW = cols - originalLayout.x;
+    const maxH = Infinity;
+    // console.log('maxW', maxW);
+    const targetLayout = {
+      w: Math.min(
+        maxW,
+        Math.max(minW, Math.round(size.width / (cellWidth + margin))),
+      ),
+      h: Math.min(
+        maxH,
+        Math.max(minH, Math.round(size.height / (rowHeight + margin))),
+      ),
+      x: originalLayout.x,
+      y: originalLayout.y,
+    };
+
+    let proposedLayout = targetLayout;
+    for (const otherLayout of layout) {
+      if (
+        originalLayout !== otherLayout &&
+        layoutsOverlap(proposedLayout, otherLayout)
+      ) {
+        proposedLayout = placeholderLayout || originalLayout;
+      }
+    }
+    console.log('resize', proposedLayout);
+    setPlaceholder({ ...proposedLayout, i: 'placeholder' });
+  };
+
+  const handleResizeStart: GridItemResizeHandler = (i, { size }) => {
+    handleResize(i, { size });
+  };
+
+
+  const handleResizeStop: GridItemResizeHandler = (i, { size }) => {
+    // const { x, y, w, h } = placeholderLayout;
+    // const newLayout = layout.map((l) =>
+    //   (l.i === i ? { ...l, x, y, w, h } : l));
+    setPlaceholder(null);
+    // this.props.onLayoutChange(newLayout));
+  };
 
   return (
     <div
@@ -128,17 +176,25 @@ const GridLayout: React.FC<GridLayoutProps> = (props) => {
         return (<GridItem
           item={item}
           i={l}
-          key={l}
+          key={layout[l].i}
+          {...getItemLayout(layout[l])}
           onDragStart={handleDragStart}
           onDrag={handleDrag}
           onDragStop={handleDragStop}
-          {...getItemLayout(layout[l])}
+          onResizeStart={handleResizeStart}
+          onResize={handleResize}
+          onResizeStop={handleResizeStop}
+          minSize={{
+            width: cellWidth,
+            height: rowHeight,
+          }}
         />);
       })}
       {
         placeholderLayout && (
           <div
             style={getItemLayout(placeholderLayout)}
+            className="placeholder"
             css={css`
               position: absolute;
               background-color: pink;
@@ -150,5 +206,6 @@ const GridLayout: React.FC<GridLayoutProps> = (props) => {
     </div>
   );
 };
+
 
 export default GridLayout;

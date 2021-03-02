@@ -1,8 +1,11 @@
+import { SyntheticEvent } from 'react';
+
 export interface RcCommonProps {
   className?: string;
 }
 
 export interface GridItemLayout {
+  i: string; // 唯一标记
   x: number;
   y: number;
   w: number;
@@ -16,11 +19,19 @@ export interface GridItemPosition {
   height: number;
 }
 
-export type GridItemHandler = (i: number, { position: GridItemPosition }) => void;
+export type GridItemDragHandler = (i: number, { position }: {position: GridItemPosition}) => void;
+export interface ResizeCallbackData {
+  element: HTMLElement;
+  size: {width: number; height: number};
+}
 
+export type GridItemResizeHandler = (i: number, { e, element, size }: ResizeCallbackData & {e: SyntheticEvent}) => void;
 export interface GridItemProps extends GridItemPosition {
   i: number;
-  onDragStart: GridItemHandler;
-  onDrag: GridItemHandler;
-  onDragStop: GridItemHandler;
+  onDragStart: GridItemDragHandler;
+  onDrag: GridItemDragHandler;
+  onDragStop: GridItemDragHandler;
+  onResizeStart: GridItemResizeHandler;
+  onResize: GridItemResizeHandler;
+  onResizeStop: GridItemResizeHandler;
 }
