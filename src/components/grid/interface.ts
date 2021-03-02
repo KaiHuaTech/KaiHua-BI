@@ -26,8 +26,8 @@ export interface ResizeCallbackData {
 }
 
 export type GridItemResizeHandler = (i: number, { e, element, size }: ResizeCallbackData & {e: SyntheticEvent}) => void;
-export interface ItemRenderFuncProps {
-  item: any;
+export interface ItemRenderFuncProps<T=any> {
+  item: T;
   style: React.CSSProperties;
   className: string;
   gridItemWidth: number;
@@ -51,5 +51,5 @@ export interface GridLayoutProps<T=any> extends RcCommonProps{
   margin: number;
   cols: number;
   rowHeight: number;
-  itemRender: ItemRenderFunc;
+  itemRender: ItemRenderFunc<T>;
 }
