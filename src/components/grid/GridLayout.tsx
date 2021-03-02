@@ -1,9 +1,9 @@
 import React, { useState, useRef, useEffect, useCallback } from 'react';
 import { css } from '@emotion/react';
 
-import { GridItemLayout, RcCommonProps } from './interface';
+import { GridItemLayout, RcCommonProps, GridItemHandler } from './interface';
 import getGridBackGround from './getGridBackGround';
-import GridItem from './GridItem';
+import GridItem from './GridItem.tsx';
 
 export interface GridLayoutProps<T=any> extends RcCommonProps{
   items: T[];
@@ -25,7 +25,9 @@ const GridLayout: React.FC<GridLayoutProps> = (props) => {
   const domRef = useRef<React.RefObject<HTMLDivElement>>(null);
 
   const [width, setWidth] = useState(0);
-  const bottom = Math.max(...layout.map((l) => l.y + l.h));
+  const [placeholderLayout, setPlaceholder] = useState<GridItemLayout|null>(null);
+
+  const bottom = Math.max(...[...layout, placeholderLayout].filter(Boolean).map((l) => l.y + l.h));
 
   // eslint-disable-next-line react-hooks/exhaustive-deps
   useEffect(() => {
@@ -60,6 +62,56 @@ const GridLayout: React.FC<GridLayoutProps> = (props) => {
     [cellWidth, rowHeight, margin],
   );
 
+  const handleDragStart = () => {
+
+  };
+
+  const layoutsOverlap = useCallback(
+    (a: GridItemLayout, b: GridItemLayout) => {
+      return (
+        a.x < b.x + b.w &&
+        a.x + a.w < b.x &&
+        a.y < b.y + b.h &&
+        b.y < a.y + a.h
+      );
+    },
+    [],
+  );
+
+  const handleDrag: GridItemHandler = (i, { position }) => {
+    const originalLayout = layout[i];
+    const pos = getItemLayout(originalLayout);
+    pos.left += position.left;
+    pos.top += position.top;
+
+    const maxX = cols - originalLayout.w;
+    const maxY = Infinity;
+
+    const targetLayout = {
+      w: originalLayout.w,
+      h: originalLayout.h,
+      x: Math.min(maxX, Math.max(0, Math.round(pos.left / (cellWidth + margin)))),
+      y: Math.min(maxY, Math.max(0, Math.round(pos.top / (rowHeight + margin)))),
+    };
+
+    let proposedLayout = targetLayout;
+
+    for (const otherLayout of layout) {
+      if (
+        originalLayout !== otherLayout &&
+        layoutsOverlap(proposedLayout, otherLayout) // 冲突比较
+      ) {
+        proposedLayout = originalLayout;
+      }
+    }
+    setPlaceholder(targetLayout);
+  };
+
+  const handleDragStop: GridItemHandler = ((i, { position }) => {
+    //
+    setPlaceholder(null);
+  });
+
   return (
     <div
       ref={domRef}
@@ -73,8 +125,28 @@ const GridLayout: React.FC<GridLayoutProps> = (props) => {
       `}
     >
       {items.map((item, l) => {
-        return <GridItem item={item} {...getItemLayout(layout[l])} />;
+        return (<GridItem
+          item={item}
+          i={l}
+          key={l}
+          onDragStart={handleDragStart}
+          onDrag={handleDrag}
+          onDragStop={handleDragStop}
+          {...getItemLayout(layout[l])}
+        />);
       })}
+      {
+        placeholderLayout && (
+          <div
+            style={getItemLayout(placeholderLayout)}
+            css={css`
+              position: absolute;
+              background-color: pink;
+              opacity: .5
+            `}
+          />
+        )
+      }
     </div>
   );
 };
