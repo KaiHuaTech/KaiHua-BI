@@ -26,6 +26,14 @@ export interface ResizeCallbackData {
 }
 
 export type GridItemResizeHandler = (i: number, { e, element, size }: ResizeCallbackData & {e: SyntheticEvent}) => void;
+export interface ItemRenderFuncProps {
+  item: any;
+  style: React.CSSProperties;
+  className: string;
+  gridItemWidth: number;
+}
+
+export type ItemRenderFunc = (data: ItemRenderFuncProps) => React.ComponentElement;
 export interface GridItemProps extends GridItemPosition {
   i: number;
   onDragStart: GridItemDragHandler;
@@ -34,4 +42,14 @@ export interface GridItemProps extends GridItemPosition {
   onResizeStart: GridItemResizeHandler;
   onResize: GridItemResizeHandler;
   onResizeStop: GridItemResizeHandler;
+  itemRender: ItemRenderFunc;
+}
+
+export interface GridLayoutProps<T=any> extends RcCommonProps{
+  items: T[];
+  layout: GridItemLayout[]; // layout 和 items 的顺序要数组顺序要一致
+  margin: number;
+  cols: number;
+  rowHeight: number;
+  itemRender: ItemRenderFunc;
 }

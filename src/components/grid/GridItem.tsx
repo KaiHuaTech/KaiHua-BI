@@ -13,6 +13,8 @@ const GridItem: React.FC<GridItemProps> = (props) => {
     width,
     height,
     minSize,
+    item,
+    itemRender,
   } = props;
 
   const [dragging, setDragging] = useState<GridItemPosition | null>(null);
@@ -127,15 +129,17 @@ const GridItem: React.FC<GridItemProps> = (props) => {
           }
         `}
       >
-        <div
-          className={classnames({
-            dragging: !!dragging,
-            resizing: !!resizing,
-          })}
-          style={style}
-        >
-          i
-        </div>
+        {
+          itemRender({
+            item,
+            className: classnames({
+              dragging: !!dragging,
+              resizing: !!resizing,
+            }),
+            style,
+            gridItemWidth: width,
+          })
+        }
       </Resizable>
     </DraggableCore>
   );

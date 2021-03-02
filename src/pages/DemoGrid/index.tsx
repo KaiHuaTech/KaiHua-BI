@@ -6,7 +6,7 @@ export const GRID_COLS = 18;
 export const GRID_ASPECT_RATIO = 4 / 3;
 export const GRID_MARGIN = 6;
 
-export default function DemoGrid() {
+const DemoGrid: React.FC = function DemoGrid() {
   /*
   *
   */
@@ -54,7 +54,20 @@ export default function DemoGrid() {
         cols={GRID_COLS}
         rowHeight={rowHeight}
         items={cards}
+        itemRender={(d) => {
+          const { item, className, style } = d;
+          return (
+            <div
+              className={className}
+              style={style}
+            >
+              {item.content}
+            </div>
+          );
+        }}
       />
     </div>
   );
-}
+};
+
+export default DemoGrid;

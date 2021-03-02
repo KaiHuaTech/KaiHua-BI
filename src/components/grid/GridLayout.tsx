@@ -1,17 +1,9 @@
 import React, { useState, useRef, useEffect, useCallback } from 'react';
 import { css } from '@emotion/react';
 
-import { GridItemLayout, RcCommonProps, GridItemDragHandler, GridItemResizeHandler } from './interface';
+import { GridItemLayout, GridItemDragHandler, GridItemResizeHandler, GridLayoutProps } from './interface';
 import getGridBackGround from './getGridBackGround';
 import GridItem from './GridItem.tsx';
-
-export interface GridLayoutProps<T=any> extends RcCommonProps{
-  items: T[];
-  layout: GridItemLayout[]; // layout 和 items 的顺序要数组顺序要一致
-  margin: number;
-  cols: number;
-  rowHeight: number;
-}
 
 const GridLayout: React.FC<GridLayoutProps> = (props) => {
   const {
@@ -21,6 +13,7 @@ const GridLayout: React.FC<GridLayoutProps> = (props) => {
     layout,
     cols,
     rowHeight,
+    itemRender,
   } = props;
   const domRef = useRef<React.RefObject<HTMLDivElement>>(null);
 
@@ -143,7 +136,7 @@ const GridLayout: React.FC<GridLayoutProps> = (props) => {
         proposedLayout = placeholderLayout || originalLayout;
       }
     }
-    console.log('resize', proposedLayout);
+    // console.log('resize', proposedLayout);
     setPlaceholder({ ...proposedLayout, i: 'placeholder' });
   };
 
@@ -184,6 +177,7 @@ const GridLayout: React.FC<GridLayoutProps> = (props) => {
           onResizeStart={handleResizeStart}
           onResize={handleResize}
           onResizeStop={handleResizeStop}
+          itemRender={itemRender}
           minSize={{
             width: cellWidth,
             height: rowHeight,
