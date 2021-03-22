@@ -1,10 +1,21 @@
 {
-  "plugins": [],
+  "plugins": [
+    ["build-plugin-fusion", {
+      "themePackage": "@alifd/theme-design-pro"
+      // ...options
+    }]
+  ],
   "babelPresets": [
     [
       "@babel/preset-react",
       { "runtime": "automatic", "importSource": "@emotion/react" }
     ]
   ],
-  "babelPlugins": ["@emotion/babel-plugin"]
+  "babelPlugins": [
+    "@emotion/babel-plugin",
+    ["babel-plugin-import", {
+      "libraryName": "@alifd/next",
+      "style": true
+    }]
+  ]
 }
