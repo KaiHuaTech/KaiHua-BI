@@ -22,9 +22,9 @@ const appConfig: IAppConfig = {
         onConfig: (response) => {
           console.log('response', response);
           // 请求成功：可以做全局的 toast 展示，或者对 response 做一些格式化
-          if (!response.data.status !== 1) {
+          /* if (!response.data.status !== 1) {
             alert('请求失败');
-          }
+          } */
           return response;
         },
         onError: (error) => {

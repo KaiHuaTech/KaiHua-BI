@@ -1,4 +1,5 @@
 import React from 'react';
+import { useHistory } from 'ice';
 import { Button, Form, Input } from '@alifd/next';
 
 import userService from './services/user';
@@ -15,11 +16,12 @@ const formItemLayout = {
 };
 
 export default function LoginAPP() {
+  const history = useHistory();
   const handleSubmit = async (value, errors) => {
     if (!errors) {
       try {
         const result = await userService.login(value);
-        console.log('result', result);
+        history.push('/');
       } catch (err) {
         console.log(err);
       }
